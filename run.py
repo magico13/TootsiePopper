@@ -8,6 +8,7 @@ from tkinter.scrolledtext import ScrolledText
 import threading
 
 from assistant import AssistantPlayer
+from terminal_wrapper import TootsieTerminalWrapper
 
 # Helper to read all available output from the process without blocking
 def read_all_available(proc, read_timeout=1):
@@ -115,7 +116,7 @@ class TootsieGUI:
     def set_last_command(self, cmd):
         cmd = cmd.strip()
         if not cmd:
-            cmd = "<newline>"
+            cmd = "<enter>"
         self.set_status(f"Sent command: {cmd}")
 
     def set_status(self, text):
@@ -170,7 +171,7 @@ if __name__ == "__main__":
     with open("system_prompt.txt", "r") as f:
         system_prompt = f.read().strip()
     player = AssistantPlayer(api_key=api_key, model_name="o4-mini", system_prompt=system_prompt)
-    game = TootsieWrapper()
+    game = TootsieTerminalWrapper()
     gui = TootsieGUI(root, game)
 
     def send_and_refresh(cmd):
@@ -207,7 +208,8 @@ if __name__ == "__main__":
                 turns_until_summary=summarize_after - summary_counter
             )
             # execute the command in the game
-            if response.command:
+            # if command is None, skip. If command is empty, send Enter.
+            if response.command is not None:
                 game_text = send_and_refresh(response.command)
                 summary_counter += 1
             else:

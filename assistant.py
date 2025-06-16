@@ -136,7 +136,7 @@ class AssistantPlayer:
         else:
             return f"Unknown function call: {function_name}"
 
-    def extract_command(self, message: str) -> tuple[str, str]:
+    def extract_command(self, message: str) -> tuple[str | None, str]:
         """
         Extract the command from the response, in the <command></command> block.
         """
@@ -148,7 +148,7 @@ class AssistantPlayer:
                 # we also should remove the <command> tags and everything between them from the message
                 message = message[:start] + message[end + len("</command>"):]
                 return command, message.strip()
-        return "", message.strip()  # Return empty command if not found
+        return None, message.strip()  # Return empty command if not found
     
     def perform_summary(self):
         """

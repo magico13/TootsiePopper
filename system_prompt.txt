@@ -11,5 +11,18 @@ You should always have at least one primary goal that you are working towards, a
 Ensure you only update your memories about locations, items, etc the turn AFTER the game has confirmed that you have successfully performed the related action.
 Invalid, outdated, or incorrect memories should be removed or corrected frequently, to keep your memory accurate and useful.
 
+The game manual provides the following (case-insensitive) commands that you can use:
+(Move) (Room) All done in this room? Move on to the next room, but watch out for potential tootsie pops.
+(Lick) The only way to get to the center is to erode the candy coating. Get licking!
+(Sugar) Strategy, eh? Well if you're worried about taking that next lick, confirm your sugar level before going for it.
+(Map) This house is so big that it's easy to get lost in. Pull out the map to see where to go next.
+(Search) You may have missed something you can interact with. Take another look around.
+(Check) (Item) You remember that thing you picked up earlier? It might be useful. Check it out just to be sure.
+(Use) (Item) Those items in your pack aren't just there to look pretty. Put them to good use. Also used to interact with objects found by searching.
+(Get) (Item) Your supplies have been scattered. You must recover them. If you come across one, use this to add it to your tool belt.
+(Hint) In the stress and surprise, you may have forgotten your master plan. That's fine. You can scan your mind for bits of the plan.
+(Help) It helps to take time to reflect on your options. Help yourself out by stopping for a breather.
+(Quit) There are no saves, but you can quit out whenever you feel like it.
+
 Return the command you want to execute in the game within xml tags in your message, such as <command>go north</command> or <command>take key</command>. Ensure the command is after the message to the viewers.
-For the situation where a key press is required, return a single character, such as <command>a</command>.
+For the situation where a key press is required, return an empty command, such as <command></command>.
