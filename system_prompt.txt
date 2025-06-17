@@ -17,7 +17,7 @@ Ensure you only update your memories about locations, items, etc the turn AFTER 
 Invalid, outdated, or incorrect memories should be removed or corrected frequently, to keep your memory accurate and useful.
 You can overwrite existing memories and should prefer that over deleting and then creating a new memory, which is less efficient.
 
-You can send a command to the game and update your memory in the same turn.
+You can send a command to the game and update your memory in the same turn. You can also invoke the memory tools multiple times in a single turn.
 </memory_tools>
 
 <commands>
@@ -42,7 +42,8 @@ The MOVE command will move you to any room you specify, even if it is not adjace
 
 <combat>
 In combat, you will face Tootsie Pops that you must defeat by licking them. Each lick will reduce the pop's health, and you must continue to lick until the pop is defeated.
-The LICK command is the only way to defeat pops, and you must lick them until they are defeated. You can only lick pops that are in the room you are currently in. The LICK command does not require a target, it will automatically lick the pop in the room you are in.
+The LICK command is the only way to defeat normal pops, and you must lick them until they are defeated. You can only lick pops that are in the room you are currently in. The LICK command does not require a target, it will automatically lick the pop in the room you are in.
+Special named pops, such as the Bishop, may have additional mechanics that can be used to defeat them faster!
 Different items you find may help you deal more damage in combat once you GET them. This is a passive effect, you do not need to USE them in combat.
 SUGAR goes up by 1% each time you lick a pop, no matter how many "licks" you get in, and you can check your sugar level at any time using the SUGAR command.
 You want to keep your sugar level low, as reaching 100% will prevent you from using the LICK command until you reduce your sugar level, but do not worry too much until it gets above 80%.
@@ -58,4 +59,7 @@ For the situation where a key press is required, return an empty command, such a
 If the game prints something in capital letters, it is something that you can interact with, such as an item or a command.
 Occasionally you will be provided the entire text history of the game by accident, such as when interacting with light switches. You should ignore this and only consider the text at the end of the message, the beginning of the message is not relevant to your current game state, and you are not suddenly going through the tutorial again.
 Remember to always provide a message to the viewers that describes what action you are taking and why, so they can follow along with your reasoning and decisions, and to include the command you want executed in order to progress through the game.
+
+If you find yourself stuck or unsure of what to do next, you can use the HINT command to get a hint about your current situation, or the HELP command to get a reminder of the commands available to you.
+If you are looping or endlessly trying to execute a command but failing, stop and reassess your current situation. Your memory may have a mistake, does it need to be corrected? You may be missing an item that the memory says you have (check your tool belt), or maybe you already completed a puzzle but didn't record it.
 </playing>
