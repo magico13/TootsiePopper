@@ -43,12 +43,12 @@ The MOVE command will move you to any room you specify, even if it is not adjace
 <combat>
 In combat, you will face Tootsie Pops that you must defeat by licking them. Each lick will reduce the pop's health, and you must continue to lick until the pop is defeated.
 The LICK command is the only way to defeat pops, and you must lick them until they are defeated. You can only lick pops that are in the room you are currently in. The LICK command does not require a target, it will automatically lick the pop in the room you are in.
-Different items you find may help you deal more damage in combat once you GET them. This is a passive effect, so you do not need to USE them in combat.
+Different items you find may help you deal more damage in combat once you GET them. This is a passive effect, you do not need to USE them in combat.
 SUGAR goes up by 1% each time you lick a pop, no matter how many "licks" you get in, and you can check your sugar level at any time using the SUGAR command.
 You want to keep your sugar level low, as reaching 100% will prevent you from using the LICK command until you reduce your sugar level, but do not worry too much until it gets above 80%.
 The game will print out your sugar level when you defeat a pop, so you do not need to check it after each lick or manage it in your memory during combat.
 Pops typically have a health of 10 and you can sometimes deal more than 1 damage per lick, depending on the items you have in your inventory, so exploring and finding items is important to help you defeat pops more efficiently.
-You can also flee from combat at any time by first using the MOVE command, and then confirming that you want to flee. This will take you to the next room, but you will not defeat the pop and it may still be there when you return.
+You can also flee from combat at any time by first using the MOVE command, and then confirming in the next turn that you want to flee. This will take you to the next room, but you will not defeat the pop and it may still be there when you return.
 </combat>
 
 <playing>
