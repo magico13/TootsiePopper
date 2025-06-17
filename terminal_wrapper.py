@@ -53,6 +53,7 @@ class TootsieTerminalWrapper:
             original_text = prev_text.rstrip()
         current_text = prev_text
         while time.time() - start_time < timeout:
+            time.sleep(1)
             current_text = self.grab_text()
             # strip all newlines after the last non-empty line
             if current_text:
@@ -69,7 +70,6 @@ class TootsieTerminalWrapper:
                     return output
                 # if we would return nothing, then return the current text
                 return current_text
-            time.sleep(1)
         return current_text
     
     def close(self):
