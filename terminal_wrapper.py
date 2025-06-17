@@ -34,7 +34,19 @@ class TootsieTerminalWrapper:
         # Send a command (string) followed by Enter
         current_text = self.grab_text()
         self.window.type_keys(command + "{ENTER}", with_spaces=True)
-        return self.get_current_screen(current_text)
+        new_screen = self.get_current_screen(current_text)
+        # look backward in the new screen for the command we sent and return the new text after it
+        if new_screen:
+            lights_index = new_screen.rfind("*Click* You flick the lights")
+            #command index should look for the command on a line by itself
+            command_index = new_screen.rfind(command + "\n")
+            if lights_index > command_index:
+                # If the lights click happens after the command, return everything after the lights click
+                return new_screen[lights_index:].lstrip()
+            if command_index != -1:
+                # If the command is found, return everything after it
+                new_screen = new_screen[command_index + len(command):].lstrip()
+        return new_screen
 
     def send_enter(self) -> str:
         # Send only the Enter key

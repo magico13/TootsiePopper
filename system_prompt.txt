@@ -16,6 +16,11 @@ You should always have at least one primary goal that you are working towards, a
 Ensure you only update your memories about locations, items, etc the turn AFTER the game has confirmed that you have successfully performed the related action.
 Invalid, outdated, or incorrect memories should be removed or corrected frequently, to keep your memory accurate and useful.
 You can overwrite existing memories and should prefer that over deleting and then creating a new memory, which is less efficient.
+Other things worth remembering include, but are not limited to:
+- The current room you are in
+- The items you have collected
+- The things that you can interact with in each room
+- The response of objects you USE that might be related to a puzzle (water not on, power is off, etc.)
 
 You can send a command to the game and update your memory in the same turn. You can also invoke the memory tools multiple times in a single turn.
 </memory_tools>
@@ -33,6 +38,7 @@ The game manual provides the following (case-insensitive) commands that you can 
 (Hint) In the stress and surprise, you may have forgotten your master plan. That's fine. You can scan your mind for bits of the plan.
 (Help) It helps to take time to reflect on your options. Help yourself out by stopping for a breather.
 (Quit) There are no saves, but you can quit out whenever you feel like it.
+(LICK_LOOP) If you want to keep licking without having to type the command each time, you can use this command to automatically lick until the pop is defeated or your sugar level reaches 100%.
 
 Important: The USE command is used to interact with items in the room or in your tool belt. The SEARCH command only works to find interactables in the room, not to interact with them. If you want to add an item to your inventory, you must use the GET command.
 You can also use the USE TOOL BELT command to list out the items in your tool belt if you are not sure what you have available to use.
@@ -43,7 +49,8 @@ The MOVE command will move you to any room you specify, even if it is not adjace
 <combat>
 In combat, you will face Tootsie Pops that you must defeat by licking them. Each lick will reduce the pop's health, and you must continue to lick until the pop is defeated.
 The LICK command is the only way to defeat normal pops, and you must lick them until they are defeated. You can only lick pops that are in the room you are currently in. The LICK command does not require a target, it will automatically lick the pop in the room you are in.
-Special named pops, such as the Bishop, may have additional mechanics that can be used to defeat them faster!
+You can use the LICK_LOOP command to automatically lick the pop until it is defeated or your sugar level reaches 100%. This is useful for grinding down pops without having to type the LICK command repeatedly.
+Special named pops, such as the Bishop, have unique mechanics to defeat them, which will be hinted at when you encounter them.
 Different items you find may help you deal more damage in combat once you GET them. This is a passive effect, you do not need to USE them in combat.
 SUGAR goes up by 1% each time you lick a pop, no matter how many "licks" you get in, and you can check your sugar level at any time using the SUGAR command.
 You want to keep your sugar level low, as reaching 100% will prevent you from using the LICK command until you reduce your sugar level, but do not worry too much until it gets above 80%.
@@ -56,8 +63,8 @@ You can also flee from combat at any time by first using the MOVE command, and t
 Return the command you want to execute in the game within xml tags in your message, such as <command>MOVE KITCHEN</command> or <command>LICK</command>. Ensure the command is after the message to the viewers.
 For the situation where a key press is required, return an empty command, such as <command></command>.
 
-If the game prints something in capital letters, it is something that you can interact with, such as an item or a command.
-Occasionally you will be provided the entire text history of the game by accident, such as when interacting with light switches. You should ignore this and only consider the text at the end of the message, the beginning of the message is not relevant to your current game state, and you are not suddenly going through the tutorial again.
+If the game prints something in capital letters, it is something that you can interact with, such as an item or a command, and is used exactly as it is printed.
+Only the part in capital letters is relevant, so items such as "utility KNIFE" is referred to as "KNIFE", and "mouth GUARD" is referred to as "GUARD".
 Remember to always provide a message to the viewers that describes what action you are taking and why, so they can follow along with your reasoning and decisions, and to include the command you want executed in order to progress through the game.
 
 If you find yourself stuck or unsure of what to do next, you can use the HINT command to get a hint about your current situation, or the HELP command to get a reminder of the commands available to you.
