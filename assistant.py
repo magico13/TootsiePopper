@@ -1,7 +1,8 @@
 import json
+import time
 from openai import OpenAI
 from openai.types.shared_params import Reasoning
-from openai.types.responses import Response, ResponseUsage
+from openai.types.responses import Response, ResponseUsage, ResponseReasoningItem, ResponseFunctionToolCall
 
 tools = [
     {
@@ -62,8 +63,10 @@ class AssistantPlayer:
         """
         # Remove old memory messages from history
         self.remove_old_memories_from_history(self.history)
+        #self.remove_old_reasoning_from_history(self.history)
         self.history.append({"role": "system", "content": "Memory: " + json.dumps(self.memory)})  # Add the memory as the last message
-        self.history.append({"role": "user", "content": game_text})
+        if game_text:
+            self.history.append({"role": "user", "content": game_text})
         response = self.client.responses.create(
                 model=self.model,
                 input=self.history,  # type: ignore
@@ -71,7 +74,7 @@ class AssistantPlayer:
                 tool_choice="auto",
                 reasoning=Reasoning(effort="medium", summary="auto") if self.model.startswith("o") else None,
                 timeout=30,
-                store=False
+                store=True
             )
         return self.handle_response(response)
     
@@ -82,6 +85,24 @@ class AssistantPlayer:
         """
         for message in history:
             if isinstance(message, dict) and message.get("role") == "system" and message.get("content", "").startswith("Memory: "):
+                history.remove(message)
+
+    def remove_old_reasoning_from_history(self, history: list):
+        """
+        Remove old reasoning messages from the history, preserving only the reasoning from the last user message onward.
+        """
+        user_message_found = False
+        for message in reversed(history):
+            if isinstance(message, dict) and message.get("role") == "user":
+                user_message_found = True
+            elif user_message_found and isinstance(message, ResponseReasoningItem):
+                # Remove reasoning messages that are before the last user message
+                history.remove(message)
+            elif user_message_found and isinstance(message, ResponseFunctionToolCall):
+                # Remove function call messages that are before the last user message
+                history.remove(message)
+            elif user_message_found and isinstance(message, dict) and message.get("type") == "function_call_output":
+                # Remove function call output messages that are before the last user message
                 history.remove(message)
 
     def handle_response(self, response: Response) -> 'AssistantResponse':
@@ -102,6 +123,7 @@ class AssistantPlayer:
                     elif content.type == "refusal":
                         final_message += content.refusal
             elif message.type == "reasoning":
+                self.history.append(message)  # Store the reasoning in history
                 for summary in message.summary:
                     reasoning += summary.text + '\n'
             elif message.type == "function_call":
@@ -150,7 +172,7 @@ class AssistantPlayer:
                 return command, message.strip()
         return None, message.strip()  # Return empty command if not found
     
-    def perform_summary(self):
+    def perform_summary(self, game_text: str) -> None:
         """
         Call an agent to summarize the entire history of the game and produce a smaller, simplified version of the history.
         This is useful for reducing the context size for future turns.
@@ -160,28 +182,43 @@ class AssistantPlayer:
             summary_prompt = f.read().strip()
         
         self.remove_old_memories_from_history(self.history)
-        self.history.append({"role": "system", "content": "Memory: " + json.dumps(self.memory)})  # Add the memory as the last message
-        self.history.append({"role": "user", "content": summary_prompt})
+        #self.remove_old_reasoning_from_history(self.history)
+        history_copy = self.history.copy()  # Make a copy of the history to avoid modifying it
+        if game_text:
+            history_copy.append({"role": "user", "content": game_text})
+        history_copy.append({"role": "system", "content": "Memory: " + json.dumps(self.memory)})  # Add the memory as the last message
+        history_copy.append({"role": "user", "content": summary_prompt})
 
-        response = self.client.responses.create(
-            model=self.model,
-            input=self.history,  # type: ignore
-            tools=[],  # type: ignore
-            tool_choice="none",
-            reasoning=Reasoning(effort="medium", summary="auto") if self.model.startswith("o") else None,
-            timeout=30,
-            store=False
-        )
-
+        success = False
+        response = None
+        while not success:
+            try:
+                response = self.client.responses.create(
+                    model="o3",
+                    input=history_copy,  # type: ignore
+                    tools=[],  # type: ignore
+                    tool_choice="none",
+                    reasoning=Reasoning(effort="medium", summary=None),
+                    timeout=300,
+                    store=False
+                )
+                success = True
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                time.sleep(1)  # Wait before retrying
+        if not response or not response.output_text:
+            # no summary is available, so we just return and will keep our current history
+            print("No summary available, keeping current history.")
+            return
         summary = response.output_text
-        # Replace unsupported (non-ASCII) characters
+        # Replace unsupported characters
         safe_summary = summary.encode("ascii", errors="replace").decode("ascii")
         # dump out the summary to a file for debugging purposes, appending to the file
         with open("summary.txt", "a") as f:
-            f.write("\n\n--- Summary ---\n")
+            f.write("\n--- Summary ---\n")
             f.write(safe_summary)
         # Clear the history and start fresh with the summary
-        self.history = [{"role": "system", "content": self.system_prompt}, {"role": "assistant", "content": summary}]
+        self.history = [{"role": "system", "content": self.system_prompt}, {"role": "user", "content": summary}]
 
 class AssistantResponse:
     def __init__(self, command: str | None, message: str, reasoning: str, usage: ResponseUsage | None):

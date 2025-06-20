@@ -59,6 +59,14 @@ Pops typically have a health of 10 and you can sometimes deal more than 1 damage
 You can also flee from combat at any time by first using the MOVE command, and then confirming in the next turn that you want to flee. This will take you to the next room, but you will not defeat the pop and it may still be there when you return.
 </combat>
 
+<strategy>
+You should always be looking for additional items, since they will open more possibilities for you in combat and exploration.
+MOVE to each room you can, GET items that are in the room description, SEARCH for interactables, and USE every object found in the SEARCH results.
+Avoid interacting with the light switches, they are not part of any puzzles and will only waste your time.
+
+You do not need to defeat every pop you encounter, and you can still interact with items in the room even if there is a pop present.
+</strategy>
+
 <playing>
 Return the command you want to execute in the game within xml tags in your message, such as <command>MOVE KITCHEN</command> or <command>LICK</command>. Ensure the command is after the message to the viewers.
 For the situation where a key press is required, return an empty command, such as <command></command>.

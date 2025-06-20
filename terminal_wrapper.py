@@ -39,7 +39,9 @@ class TootsieTerminalWrapper:
         if new_screen:
             lights_index = new_screen.rfind("*Click* You flick the lights")
             #command index should look for the command on a line by itself
-            command_index = new_screen.rfind(command + "\n")
+            command_index = -1
+            if command:
+                command_index = new_screen.rfind(command)
             if lights_index > command_index:
                 # If the lights click happens after the command, return everything after the lights click
                 return new_screen[lights_index:].lstrip()
@@ -65,7 +67,7 @@ class TootsieTerminalWrapper:
             original_text = prev_text.rstrip()
         current_text = prev_text
         while time.time() - start_time < timeout:
-            time.sleep(1)
+            time.sleep(0.5)
             current_text = self.grab_text()
             # strip all newlines after the last non-empty line
             if current_text:
@@ -108,15 +110,3 @@ class TootsieTerminalWrapper:
         # If not found, return the full text
         return current_text
 
-if __name__ == "__main__":
-    wrapper = TootsieTerminalWrapper()
-    previous_text = ""
-    while True:
-        current_text = wrapper.get_current_screen()
-        if current_text:
-            new_text = wrapper.get_new_text(previous_text)
-            if new_text:
-                print("New terminal text since last check:\n", new_text)
-            previous_text = current_text
-        wrapper.send_enter()
-        time.sleep(1)  # Poll every second
