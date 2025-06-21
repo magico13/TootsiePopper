@@ -2,6 +2,8 @@ from pywinauto import Application
 import time
 
 class TootsieTerminalWrapper:
+    COMMAND_INPUT_PROMPT = "What do you do?:"
+
     def __init__(self, window_title_re=r".*tootsie.exe.*", exe_path="tootsie.exe"):        
         # Try UIA backend for Windows Terminal, fallback to classic
         try:
@@ -42,6 +44,9 @@ class TootsieTerminalWrapper:
             command_index = -1
             if command:
                 command_index = new_screen.rfind(command)
+                # maybe the command didn't come through correctly, also find the last instance of "What do you do?" prompt
+                if command_index == -1:
+                    command_index = new_screen.rfind(self.COMMAND_INPUT_PROMPT)
             if lights_index > command_index:
                 # If the lights click happens after the command, return everything after the lights click
                 return new_screen[lights_index:].lstrip()
@@ -56,10 +61,10 @@ class TootsieTerminalWrapper:
         self.window.type_keys("{ENTER}")
         new_screen = self.get_current_screen(current_text)
         # check for the text of "What do you do?" prompt and don't go any further back from that
-        prompt_index = new_screen.rfind("What do you do?")
+        prompt_index = new_screen.rfind(self.COMMAND_INPUT_PROMPT)
         if prompt_index != -1:
             # If the prompt is found, return everything after it
-            new_screen = new_screen[prompt_index + len("What do you do?"):].lstrip()
+            new_screen = new_screen[prompt_index + len(self.COMMAND_INPUT_PROMPT):].lstrip()
         return new_screen
 
     def get_current_screen(self, original_text: str | None= None) -> str:
@@ -73,7 +78,7 @@ class TootsieTerminalWrapper:
             original_text = prev_text.rstrip()
         current_text = prev_text
         while time.time() - start_time < timeout:
-            time.sleep(0.5)
+            time.sleep(1)
             current_text = self.grab_text()
             # strip all newlines after the last non-empty line
             if current_text:
