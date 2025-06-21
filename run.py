@@ -63,7 +63,7 @@ class TootsieWrapper:
         self.proc.close()
 
 class TootsieGUI:
-    def __init__(self, root, game_wrapper):
+    def __init__(self, root):
         self.root = root
         self.root.title("TootsiePopper")
         # Make window larger
@@ -102,7 +102,6 @@ class TootsieGUI:
         self.token_var = tk.StringVar()
         self.token_label = tk.Label(root, textvariable=self.token_var, anchor="e", fg="#555")
         self.token_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=(0,10))
-        self.game = game_wrapper
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def update_output(self, text):
@@ -153,10 +152,6 @@ class TootsieGUI:
             self.token_var.set("")
 
     def on_close(self):
-        try:
-            self.game.close()
-        except Exception:
-            pass
         self.root.destroy()
 
 if __name__ == "__main__":
@@ -171,7 +166,7 @@ if __name__ == "__main__":
         system_prompt = f.read().strip()
     player = AssistantPlayer(api_key=api_key, model_name="o4-mini", system_prompt=system_prompt)
     game = TootsieTerminalWrapper()
-    gui = TootsieGUI(root, game)
+    gui = TootsieGUI(root)
 
     def send_and_refresh(cmd):
         gui.set_last_command(cmd)
@@ -195,6 +190,12 @@ if __name__ == "__main__":
         gui.reset_status()
         return new_text
 
+    def finish_game(game_text):
+        gui.update_output(game_text)
+        # Run a final summary
+        gui.set_status("Generating final summary...")
+        player.perform_summary(game_text)
+
     # Example: programmatically send commands and update the GUI
     def play_game():
         # get the initial game state
@@ -204,13 +205,17 @@ if __name__ == "__main__":
         summarize_after = 25
         summary_counter = 0
         while True:
+            # check if we have finished the game
+            if "Bye!" in game_text or "game is over" in game_text:
+                finish_game(game_text)
+                break
             # check if we need to summarize the game state
             if summary_counter >= summarize_after:
                 gui.set_status("Summarizing game state...")
                 player.perform_summary(game_text)
                 summary_counter = 0
                 continue
-            gui.set_status("LLM Player thinking...")
+            gui.set_status("Player thinking...")
             response = player.get_response(game_text)
             gui.set_llm_message(response.message)
             gui.set_reasoning(response.reasoning)

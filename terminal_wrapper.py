@@ -54,7 +54,13 @@ class TootsieTerminalWrapper:
         # Send only the Enter key
         current_text = self.grab_text()
         self.window.type_keys("{ENTER}")
-        return self.get_current_screen(current_text)
+        new_screen = self.get_current_screen(current_text)
+        # check for the text of "What do you do?" prompt and don't go any further back from that
+        prompt_index = new_screen.rfind("What do you do?")
+        if prompt_index != -1:
+            # If the prompt is found, return everything after it
+            new_screen = new_screen[prompt_index + len("What do you do?"):].lstrip()
+        return new_screen
 
     def get_current_screen(self, original_text: str | None= None) -> str:
         # Wait for output to stop changing for a certain period
